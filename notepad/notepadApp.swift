@@ -9,12 +9,12 @@ import SwiftUI
 
 @main
 struct notepadApp: App {
-    let persistenceController = PersistenceController.shared
+    let persistentContainer = CoreDataManager.shared.persistentContainer
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, persistentContainer.viewContext)
         }
     }
 }

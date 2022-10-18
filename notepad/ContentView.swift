@@ -6,83 +6,143 @@
 //
 
 import SwiftUI
-import CoreData
 
-struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
-    var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
-        }
+enum Priority: String, Identifiable, CaseIterable{
+    
+    var id: UUID{
+        return UUID()
     }
+    
+    case low = "Low"
+    case medium = "Medium"
+    case high = "High"
+}
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+extension Priority{
+    var title: String{
+        switch self{
+        case .low:
+            return "Low"
+        case .medium:
+            return "Medium"
+        case .high:
+            return "High"
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+struct ContentView: View {
+    
+    @State private var title: String = ""
+    @State private var selectedPriority: Priority = .medium
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(entity: Note.entity(), sortDescriptors: [NSSortDescriptor(key: "dateCreated", ascending: false)]) private var allNotes: FetchedResults<Note>
+    
+    private func saveNote(){
+        do{
+            let note = Note(context: viewContext)
+            note.title = title
+            note.priority = selectedPriority.rawValue
+            note.dateCreated = Date()
+            try viewContext.save()
+        }catch{
+            print(error.localizedDescription)
+        }
+    }
+    
+    private func styleForPriority(_ value: String) -> Color{
+        let priority = Priority(rawValue: value)
+        
+        switch priority{
+        case .low:
+            return Color.green
+            
+        case .medium:
+            return Color.orange
+            
+        case .high:
+            return Color.red
+        default:
+            return Color.black
+        }
+    }
+    
+    private func updateNote(_ note: Note){
+        note.isFavorite = !note.isFavorite
+        
+        do{
+            try viewContext.save()
+        }catch{
+            print(error.localizedDescription)
+        }
+    }
+    
+    private func deleteNote(at offsets: IndexSet){
+        offsets.forEach{
+            index in
+            let note = allNotes[index]
+            viewContext.delete(note)
+        }
+        
+        do{
+            try viewContext.save()
+        }catch{
+            print(error.localizedDescription)
+        }
+    }
+    
+    var body: some View {
+        NavigationView{
+            VStack{
+                TextField("Enter title",text: $title).textFieldStyle(.roundedBorder)
+                Picker("Priority", selection: $selectedPriority){
+                    ForEach(Priority.allCases){ priority in
+                        Text(priority.title).tag(priority)
+                        
+                    }
+                }.pickerStyle(.segmented)
+                
+                Button("Save"){
+                    saveNote()
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10.0, style: .continuous))
+                
+                List{
+                    ForEach(allNotes){
+                        note in
+                        HStack{
+                            Circle()
+                                .fill(styleForPriority(note.priority!))
+                                .frame(width: 15,height: 15)
+                            Spacer().frame(width: 20)
+                            Text(note.title ?? "")
+                            Spacer()
+                            Image(systemName: note.isFavorite ? "heart.fill" : "heart").foregroundColor(.red)
+                                .onTapGesture {
+                                    updateNote(note)
+                                }
+                        }
+                    }.onDelete(perform: deleteNote)
+                }
+                
+                Spacer()
+                
+            }
+            .padding()
+            .navigationTitle("All Notes")
+        }
+    }
+}
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+struct ContentView_Previews: PreviewProvider{
+    static var previews: some View{
+        let persistentContainer = CoreDataManager.shared.persistentContainer
+        ContentView()
+            .environment(\.managedObjectContext, persistentContainer.viewContext)
     }
 }

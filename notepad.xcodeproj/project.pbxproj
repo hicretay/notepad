@@ -16,6 +16,8 @@
 		2027690D28FB3BCF008D1EC9 /* notepadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027690C28FB3BCF008D1EC9 /* notepadTests.swift */; };
 		2027691728FB3BCF008D1EC9 /* notepadUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027691628FB3BCF008D1EC9 /* notepadUITests.swift */; };
 		2027691928FB3BCF008D1EC9 /* notepadUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2027691828FB3BCF008D1EC9 /* notepadUITestsLaunchTests.swift */; };
+		20B6506528FE9D2E0049870A /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 20B6506328FE9D2E0049870A /* DataModel.xcdatamodeld */; };
+		20B6506828FE9E8B0049870A /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B6506728FE9E8B0049870A /* CoreDataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +50,8 @@
 		2027691228FB3BCF008D1EC9 /* notepadUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = notepadUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2027691628FB3BCF008D1EC9 /* notepadUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notepadUITests.swift; sourceTree = "<group>"; };
 		2027691828FB3BCF008D1EC9 /* notepadUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notepadUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		20B6506428FE9D2E0049870A /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		20B6506728FE9E8B0049870A /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,8 +102,10 @@
 		202768F528FB3BCE008D1EC9 /* notepad */ = {
 			isa = PBXGroup;
 			children = (
+				20B6506628FE9E5F0049870A /* Managers */,
 				202768F628FB3BCE008D1EC9 /* notepadApp.swift */,
 				202768F828FB3BCE008D1EC9 /* ContentView.swift */,
+				20B6506328FE9D2E0049870A /* DataModel.xcdatamodeld */,
 				202768FA28FB3BCF008D1EC9 /* Assets.xcassets */,
 				202768FF28FB3BCF008D1EC9 /* Persistence.swift */,
 				2027690128FB3BCF008D1EC9 /* notepad.xcdatamodeld */,
@@ -131,6 +137,14 @@
 				2027691828FB3BCF008D1EC9 /* notepadUITestsLaunchTests.swift */,
 			);
 			path = notepadUITests;
+			sourceTree = "<group>";
+		};
+		20B6506628FE9E5F0049870A /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				20B6506728FE9E8B0049870A /* CoreDataManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -264,8 +278,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2027690028FB3BCF008D1EC9 /* Persistence.swift in Sources */,
+				20B6506528FE9D2E0049870A /* DataModel.xcdatamodeld in Sources */,
 				202768F928FB3BCE008D1EC9 /* ContentView.swift in Sources */,
 				202768F728FB3BCE008D1EC9 /* notepadApp.swift in Sources */,
+				20B6506828FE9E8B0049870A /* CoreDataManager.swift in Sources */,
 				2027690328FB3BCF008D1EC9 /* notepad.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -600,6 +616,16 @@
 			);
 			currentVersion = 2027690228FB3BCF008D1EC9 /* notepad.xcdatamodel */;
 			path = notepad.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		20B6506328FE9D2E0049870A /* DataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				20B6506428FE9D2E0049870A /* DataModel.xcdatamodel */,
+			);
+			currentVersion = 20B6506428FE9D2E0049870A /* DataModel.xcdatamodel */;
+			path = DataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
